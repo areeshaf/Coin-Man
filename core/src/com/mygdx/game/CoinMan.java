@@ -4,7 +4,12 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
+
+import org.omg.PortableInterceptor.Interceptor;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -28,6 +33,12 @@ public class CoinMan extends ApplicationAdapter {
 	int countBombs;
 	Texture coin;
 	Texture bomb;
+
+	BitmapFont font;
+	int score;
+	ArrayList<Rectangle> coinRectangle=new ArrayList<Rectangle>();
+	ArrayList<Rectangle> bombRectangle=new ArrayList<Rectangle>();
+	Rectangle manRectangle;
 
 	@Override
 	public void create () {
@@ -70,9 +81,12 @@ public class CoinMan extends ApplicationAdapter {
 			makebomb();
 		}
 
-		for (int i=0;i<bombYs.size();i++){
+		bombRectangle.clear();
+		for (int i=0;i<bombXs.size();i++){
 			batch.draw(bomb,bombXs.get(i),bombYs.get(i));
 			bombXs.set(i,bombXs.get(i)-8);
+			bombRectangle.add(new Rectangle(bombXs.get(i),bombYs.get(i),bomb.getWidth(),bomb.getHeight()));
+
 		}
 
 
@@ -82,9 +96,11 @@ public class CoinMan extends ApplicationAdapter {
 			countCoins=0;
 			makeCoin();
 		}
+		coinRectangle.clear();
 		for(int i=0;i<coinXs.size();i++){
 			batch.draw(coin,coinXs.get(i),coinYs.get(i));
 			coinXs.set(i,coinXs.get(i)-4);
+			coinRectangle.add(new Rectangle(coinXs.get(i),coinYs.get(i),coin.getWidth(),coin.getHeight()));
 		}
 
 
@@ -109,6 +125,25 @@ public class CoinMan extends ApplicationAdapter {
         	manY=0;
 		}
         batch.draw(man[manState],Gdx.graphics.getWidth()/2-man[manState].getWidth()/2,manY);
+        manRectangle=new Rectangle(Gdx.graphics.getWidth()/2-man[manState].getWidth()/2,manY,man[manState].getWidth(),man[manState].getHeight());
+        for (int i=0;i<coinRectangle.size();i++){
+        	if(Intersector.overlaps(manRectangle,coinRectangle.get(i))){
+        		//Gdx.app.log("Coins","Collision!!!");
+				score++;
+				coinRectangle.remove(i);
+				coinXs.remove(i);
+				coinYs.remove(i);
+				break;
+			}
+		}
+
+		for (int i=0;i<bombRectangle.size();i++){
+			if(Intersector.overlaps(manRectangle,bombRectangle.get(i))){
+				Gdx.app.log("Bombs","Collision!!!");
+			}
+		}
+
+
 
 		batch.end();
 	}
