@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class CoinMan extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture background;
@@ -15,6 +18,12 @@ public class CoinMan extends ApplicationAdapter {
 	int manY=0;
 	float gravity=0.2f;
 	float velocity=0;
+
+	Random random;
+	ArrayList<Integer> coinXs=new ArrayList<Integer>();
+	ArrayList<Integer> coinYs=new ArrayList<Integer>();
+	int countCoins;
+	Texture coin;
 
 	@Override
 	public void create () {
@@ -26,8 +35,16 @@ public class CoinMan extends ApplicationAdapter {
         man[2]=new Texture("frame-3.png");
         man[3]=new Texture("frame-4.png");
 
+        random=new Random();
+        coin=new Texture("coin.png");
         manY=Gdx.graphics.getHeight()/2;
 
+	}
+
+	public void makeCoin(){
+		coinXs.add(Gdx.graphics.getWidth());
+		float height=random.nextFloat()*Gdx.graphics.getHeight();
+		coinYs.add((int)height);
 	}
 
 	@Override
@@ -36,6 +53,16 @@ public class CoinMan extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(background,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 
+		if (countCoins<100){
+			countCoins++;
+		}else {
+			countCoins=0;
+			makeCoin();
+		}
+		for(int i=0;i<coinXs.size();i++){
+			batch.draw(coin,coinXs.get(i),coinYs.get(i));
+			coinXs.set(i,coinXs.get(i)-4);
+		}
 		if(Gdx.input.justTouched()){
 			velocity=-10;
 		}
