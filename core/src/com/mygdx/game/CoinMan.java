@@ -40,6 +40,7 @@ public class CoinMan extends ApplicationAdapter {
 	ArrayList<Rectangle> coinRectangle=new ArrayList<Rectangle>();
 	ArrayList<Rectangle> bombRectangle=new ArrayList<Rectangle>();
 	Rectangle manRectangle;
+	Texture dizzy;
 
 	@Override
 	public void create () {
@@ -54,7 +55,7 @@ public class CoinMan extends ApplicationAdapter {
         random=new Random();
         coin=new Texture("coin.png");
         manY=Gdx.graphics.getHeight()/2;
-
+        dizzy=new Texture("dizzy-1.png");
         font=new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(10);
@@ -153,8 +154,12 @@ public class CoinMan extends ApplicationAdapter {
 			}
 		}
 
+		if(gameState==2){
+			batch.draw(dizzy, Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, manY);
+		}else {
 
-        batch.draw(man[manState],Gdx.graphics.getWidth()/2-man[manState].getWidth()/2,manY);
+			batch.draw(man[manState], Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, manY);
+		}
         manRectangle=new Rectangle(Gdx.graphics.getWidth()/2-man[manState].getWidth()/2,manY,man[manState].getWidth(),man[manState].getHeight());
         for (int i=0;i<coinRectangle.size();i++){
         	if(Intersector.overlaps(manRectangle,coinRectangle.get(i))){
